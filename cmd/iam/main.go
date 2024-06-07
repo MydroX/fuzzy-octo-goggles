@@ -7,8 +7,10 @@ import (
 	"log"
 )
 
+const serviceName = "iam"
+
 func main() {
-	cfg, err := iam.LoadConfig()
+	cfg, err := iam.LoadConfig(serviceName)
 	if err != nil {
 		log.Fatalf("error loading config: %v", err)
 	}

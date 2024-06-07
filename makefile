@@ -3,7 +3,7 @@ init:
 
 up:
 	@echo "Starting..."
-	@docker-compose -f deploy/docker-compose.yml up -d
+	@docker-compose -f deploy/docker-compose.yml up --build
 
 down:
 	@echo "Stopping..."

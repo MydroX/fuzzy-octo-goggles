@@ -7,11 +7,12 @@ import (
 )
 
 type Config struct {
-	Env string `yaml:"env"`
+	Env  string `yaml:"env"`
+	Port string `yaml:"port"`
 }
 
-func LoadConfig() (*Config, error) {
-	f, err := config.Read()
+func LoadConfig(serviceName string) (*Config, error) {
+	f, err := config.Read(serviceName)
 	if err != nil {
 		return nil, err
 	}

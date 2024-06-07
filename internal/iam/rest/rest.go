@@ -2,6 +2,7 @@ package rest
 
 import (
 	"MydroX/project-v/internal/iam"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -16,5 +17,8 @@ func NewServer(config *iam.Config, logger zap.Logger) {
 		})
 	})
 
-	router.Run()
+	err := router.Run(fmt.Sprintf(":%s", config.Port))
+	if err != nil {
+		logger.Fatal("error starting server", zap.Error(err))
+	}
 }
