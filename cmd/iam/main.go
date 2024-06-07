@@ -2,7 +2,6 @@ package main
 
 import (
 	"MydroX/project-v/internal/iam"
-	"MydroX/project-v/internal/iam/rest"
 	"MydroX/project-v/pkg/logger"
 	"log"
 )
@@ -18,5 +17,5 @@ func main() {
 	logger := logger.New(cfg.Env)
 
 	logger.Info("starting server...")
-	rest.NewServer(cfg, *logger)
+	iam.NewServer(cfg, *logger)
 }
