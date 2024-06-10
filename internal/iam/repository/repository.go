@@ -1,3 +1,4 @@
+// Package repository provides every implementation of database operations.
 package repository
 
 import (
@@ -12,6 +13,7 @@ type repository struct {
 	db     *gorm.DB
 }
 
+// NewRepository is creating an interface for every method of the repository
 func NewRepository(l *logger.Logger, db *gorm.DB) RepositoryInterface {
 	return &repository{
 		logger: l,

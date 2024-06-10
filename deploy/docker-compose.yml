@@ -9,11 +9,11 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - db-iam
     networks:
       - project-v
-  db:
-    container_name: db
+  db-iam:
+    container_name: db-iam
     image: postgres:16.3-alpine3.20
     environment:
       POSTGRES_USER: postgres
