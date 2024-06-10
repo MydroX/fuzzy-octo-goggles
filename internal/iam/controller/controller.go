@@ -2,6 +2,7 @@
 package controller
 
 import (
+	"MydroX/project-v/internal/iam/usecases"
 	"MydroX/project-v/pkg/logger"
 	"MydroX/project-v/pkg/response"
 
@@ -12,14 +13,16 @@ import (
 type controller struct {
 	logger   *logger.Logger
 	validate *validator.Validate
+	usecases usecases.UsecasesInterface
 	// repository repository.RepositoryInterface
 }
 
 // NewController is the interface for the controller.
-func NewController(l *logger.Logger, v *validator.Validate) ControllerInterface {
+func NewController(l *logger.Logger, v *validator.Validate, u usecases.UsecasesInterface) ControllerInterface {
 	return &controller{
 		logger:   l,
 		validate: v,
+		usecases: u,
 	}
 }
 
@@ -31,21 +34,26 @@ type createUserRequest struct {
 }
 
 func (c *controller) CreateUser(ctx *gin.Context) {
+
 	var request createUserRequest
 
 	err := ctx.BindJSON(request)
 	if err != nil {
-		response.Error(c.logger, ctx, 400, "invalid request")
+		response.InvalidRequest(c.logger, ctx)
 		return
 	}
 
 	err = c.validate.Struct(request)
 	if err != nil {
-		response.Error(c.logger, ctx, 400, "invalid request")
+		response.InvalidRequest(c.logger, ctx)
 		return
 	}
 
-	// TODO: create user
+	err = c.usecases.Create(ctx, request.Username, request.Password, request.Email, request.Role)
+	if err != nil {
+		response.InternalError(c.logger, ctx)
+		return
+	}
 
 	response.CreationSuccess(ctx, "user created")
 }

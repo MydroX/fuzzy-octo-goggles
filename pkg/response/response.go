@@ -19,6 +19,16 @@ func Error(logger *logger.Logger, ctx *gin.Context, code int, message string) {
 	ctx.JSON(code, gin.H{"error": "an error occurred. please try again later or contact support"})
 }
 
+// InternalError is a function to handle error response for internal server error
+func InternalError(logger *logger.Logger, ctx *gin.Context) {
+	Error(logger, ctx, 500, "internal server error")
+}
+
+// InvalidRequest is a function to handle error response for invalid request
+func InvalidRequest(logger *logger.Logger, ctx *gin.Context) {
+	Error(logger, ctx, 400, "invalid request")
+}
+
 // CreationSuccess is a function to handle success response for creation of any entity
 func CreationSuccess(ctx *gin.Context, message string) {
 	ctx.JSON(201, gin.H{"message": message})

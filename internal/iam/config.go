@@ -7,8 +7,17 @@ import (
 )
 
 type Config struct {
-	Env  string `yaml:"env"`
-	Port string `yaml:"port"`
+	Env  string   `yaml:"env"`
+	Port string   `yaml:"port"`
+	DB   Database `yaml:"database"`
+}
+
+type Database struct {
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	Name     string `yaml:"name"`
 }
 
 func LoadConfig(serviceName string) (*Config, error) {

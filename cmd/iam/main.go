@@ -2,6 +2,7 @@ package main
 
 import (
 	"MydroX/project-v/internal/iam"
+	"MydroX/project-v/pkg/db"
 	"MydroX/project-v/pkg/logger"
 	"log"
 
@@ -20,6 +21,8 @@ func main() {
 
 	validator := validator.New()
 
+	db := db.Connect(cfg.DB.Host, cfg.DB.Username, cfg.DB.Password, cfg.DB.Name, cfg.DB.Port)
+
 	logger.Zap.Info("starting server...")
-	iam.NewServer(cfg, logger, validator)
+	iam.NewServer(cfg, logger, validator, db)
 }
