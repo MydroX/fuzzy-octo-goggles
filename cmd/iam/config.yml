@@ -1,9 +1,9 @@
 serviceName: iam
 env: DEV
 port: 3000
-db:
-  host: localhost
+database:
+  host: db-iam
   port: 5432
   user: postgres
   password: postgres
-  database: db
+  name: postgres
