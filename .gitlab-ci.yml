@@ -5,3 +5,25 @@ build-job:
     - echo "Build completed"
   tags:
     - docker
+
+stages:
+  - lint
+  - build
+  - test
+  # - deploy
+
+variables:
+  GOLANGCI_LINT_VERSION: 'v1.59.1'
+lint:
+  image: golangci/golangci-lint:$GOLANGCI_LINT_VERSION
+  stage: test
+  script:
+    # Write the code coverage report to gl-code-quality-report.json
+    # and print linting issues to stdout in the format: path/to/file:line description
+    # remove `--issues-exit-code 0` or set to non-zero to fail the job if linting issues are detected
+    - golangci-lint run --issues-exit-code 0 --print-issued-lines=false --out-format code-climate:gl-code-quality-report.json,line-number
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+    paths:
+      - gl-code-quality-report.json
