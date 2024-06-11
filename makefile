@@ -20,3 +20,7 @@ create-migration:
 migrate-up:
 	@echo "Migrating up..."
 	@GOOSE_DRIVER=postgres GOOSE_MIGRATION_DIR=migrations GOOSE_DBSTRING="postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable" goose up
+
+migrate-reset:
+	@echo "Reset database..."
+	@GOOSE_DRIVER=postgres GOOSE_MIGRATION_DIR=migrations GOOSE_DBSTRING="postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable" goose reset
