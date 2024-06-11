@@ -1,7 +1,9 @@
+image: golang:latest
+
 stages:
   - lint
   - build
-  # - test
+  - test
   # - deploy
 
 variables:
