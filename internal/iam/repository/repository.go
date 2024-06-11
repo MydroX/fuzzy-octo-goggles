@@ -4,7 +4,9 @@ package repository
 import (
 	"MydroX/project-v/internal/models"
 	"MydroX/project-v/pkg/logger"
+	"fmt"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -21,8 +23,9 @@ func NewRepository(l *logger.Logger, db *gorm.DB) RepositoryInterface {
 	}
 }
 
-func (r *repository) CreateUser(username, email, password, role string) error {
+func (r *repository) CreateUser(uuid uuid.UUID, username, email, password, role string) error {
 	user := &models.User{
+		UUID:     uuid,
 		Username: username,
 		Email:    email,
 		Password: password,
@@ -31,6 +34,9 @@ func (r *repository) CreateUser(username, email, password, role string) error {
 
 	res := r.db.Create(user)
 	if res.Error != nil {
+		if res.Error == gorm.ErrDuplicatedKey {
+			fmt.Println(res.Error)
+		}
 		r.logger.Zap.Sugar().Errorf("error creating user: %v", res.Error)
 		return res.Error
 	}

@@ -29,9 +29,11 @@ func NewServer(config *Config, logger *logger.Logger, validate *validator.Valida
 	usecases := usecases.NewUsecases(logger, repository)
 	controller := controller.NewController(logger, validate, usecases)
 
+	api := router.Group("api")
+
 	// - Middleware SECRET KEY API for every endpoint in headers
 
-	v1 := router.Group("/v1")
+	v1 := api.Group("/v1")
 	v1.POST("/register", controller.CreateUser)
 	v1.POST("/auth", controller.AuthenticateUser)
 	v1.POST("/:uuid", controller.GetUser)

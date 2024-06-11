@@ -5,6 +5,8 @@ import (
 	"MydroX/project-v/internal/iam/repository"
 	"MydroX/project-v/pkg/logger"
 	"context"
+
+	"github.com/google/uuid"
 )
 
 type usecases struct {
@@ -25,7 +27,9 @@ func (u *usecases) Create(ctx context.Context, username, password, email, role s
 		role = "GUEST"
 	}
 
-	err := u.repository.CreateUser(username, email, password, role)
+	userUUID := uuid.New()
+
+	err := u.repository.CreateUser(userUUID, username, email, password, role)
 
 	return err
 }

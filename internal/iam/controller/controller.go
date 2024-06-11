@@ -4,7 +4,9 @@ package controller
 import (
 	"MydroX/project-v/internal/iam/usecases"
 	"MydroX/project-v/pkg/logger"
+	"MydroX/project-v/pkg/password"
 	"MydroX/project-v/pkg/response"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -30,14 +32,14 @@ type createUserRequest struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
-	Role     string `json:"role"`
+	Role     string `json:"role" validate:"required,oneof=ADMIN USER"`
 }
 
 func (c *controller) CreateUser(ctx *gin.Context) {
 
 	var request createUserRequest
 
-	err := ctx.BindJSON(request)
+	err := ctx.BindJSON(&request)
 	if err != nil {
 		response.InvalidRequest(c.logger, ctx)
 		return
@@ -49,9 +51,15 @@ func (c *controller) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	err = c.usecases.Create(ctx, request.Username, request.Password, request.Email, request.Role)
+	passwordCrypted, err := password.Hash(request.Password)
 	if err != nil {
-		response.InternalError(c.logger, ctx)
+		response.InternalError(c.logger, ctx, fmt.Errorf("error hashing password"))
+		return
+	}
+
+	err = c.usecases.Create(ctx, request.Username, passwordCrypted, request.Email, request.Role)
+	if err != nil {
+		response.InternalError(c.logger, ctx, err)
 		return
 	}
 

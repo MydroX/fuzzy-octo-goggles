@@ -10,13 +10,13 @@ type Logger struct {
 func New(env string) *Logger {
 	var zapLogger *zap.Logger
 	switch env {
-	case "dev":
+	case "DEV":
 		zapLogger, _ = zap.NewDevelopment()
 		return &Logger{
 			Zap:   zapLogger,
 			Debug: true,
 		}
-	case "prod":
+	case "PROD":
 		zapLogger, _ = zap.NewProduction()
 		return &Logger{
 			Zap:   zapLogger,

@@ -1,5 +1,7 @@
 package repository
 
+import "github.com/google/uuid"
+
 type RepositoryInterface interface {
-	CreateUser(name, email, password, role string) error
+	CreateUser(uuid uuid.UUID, name, email, password, role string) error
 }
