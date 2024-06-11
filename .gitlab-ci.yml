@@ -1,5 +1,7 @@
-job1:
+build-job:
+  stage: build
   script:
-    - echo "This job runs in merge request pipelines"
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - echo "Building the app"
+    - echo "Build completed"
+  tags:
+    - docker
