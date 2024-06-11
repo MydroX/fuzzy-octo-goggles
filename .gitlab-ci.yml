@@ -1,15 +1,7 @@
-build-job:
-  stage: build
-  script:
-    - echo "Building the app"
-    - echo "Build completed"
-  tags:
-    - docker
-
 stages:
   - lint
-  - build
-  - test
+  # - build
+  # - test
   # - deploy
 
 variables:
