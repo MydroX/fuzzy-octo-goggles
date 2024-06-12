@@ -21,11 +21,11 @@ lint:
       - gl-code-quality-report.json
 
 go-test:
-  stage: test
-  script:
-    - go get github.com/t-yuki/gocover-cobertura
-    - go test  ./... -v -coverprofile coverage.txt
-    - gocover-cobertura < coverage.txt > coverage.xml
+    stage: test
+    script:
+      - go get github.com/t-yuki/gocover-cobertura
+      - go test  ./... -v -coverprofile coverage.txt
+      - gocover-cobertura < coverage.txt > coverage.xml
     coverage: /^coverage:\s(\d+(?:\.\d+)?%)/
     artifacts:
       name: $CI_JOB_NAME/coverage.txt
