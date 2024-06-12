@@ -22,9 +22,9 @@ lint:
 
 go-test:
     stage: test
-    coverage: '/coverage: \d+.\d+% of statements/'
     script:
-      - go test -cover
+      - go test -v ./... -cover
+    coverage: '/coverage: \d+.\d+% of statements/'
 build:
   stage: build
   script:
