@@ -42,8 +42,6 @@ func newServerTest(t *testing.T) testServer {
 }
 
 func Test_Create(t *testing.T) {
-	w := httptest.NewRecorder()
-
 	s := newServerTest(t)
 
 	t.Run("Create with success V1", func(t *testing.T) {
@@ -59,6 +57,7 @@ func Test_Create(t *testing.T) {
 
 		s.mockUsecase.EXPECT().Create(gomock.Any(), input.Username, gomock.Any(), input.Email, input.Role).Return(nil)
 
+		w := httptest.NewRecorder()
 		s.router.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusCreated, w.Code)
 	})
@@ -66,6 +65,7 @@ func Test_Create(t *testing.T) {
 	t.Run("Failed to bind JSON", func(t *testing.T) {
 		req, _ := http.NewRequest("POST", v1+create, strings.NewReader(""))
 
+		w := httptest.NewRecorder()
 		s.router.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
@@ -83,6 +83,7 @@ func Test_Create(t *testing.T) {
 
 		s.mockUsecase.EXPECT().Create(gomock.Any(), input.Username, gomock.Any(), input.Email, input.Role).Return(nil).AnyTimes()
 
+		w := httptest.NewRecorder()
 		s.router.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
@@ -99,6 +100,8 @@ func Test_Create(t *testing.T) {
 		req, _ := http.NewRequest("POST", v1+create, strings.NewReader(string(userJSON)))
 
 		s.mockUsecase.EXPECT().Create(gomock.Any(), input.Username, gomock.Any(), input.Email, input.Role).Return(fmt.Errorf("test error"))
+
+		w := httptest.NewRecorder()
 		s.router.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
