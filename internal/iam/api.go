@@ -15,7 +15,11 @@ import (
 
 func Router(logger *logger.Logger, validate *validator.Validate, db *gorm.DB, controller ControllerInterface) *gin.Engine {
 	router := gin.Default()
-	router.SetTrustedProxies(nil)
+
+	err := router.SetTrustedProxies(nil)
+	if err != nil {
+		logger.Zap.Fatal("error setting trusted proxies", zap.Error(err))
+	}
 
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
