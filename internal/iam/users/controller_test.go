@@ -1,7 +1,8 @@
-package iam
+package users
 
 import (
-	"MydroX/project-v/internal/iam/mocks"
+	"MydroX/project-v/internal/iam/users/dto"
+	"MydroX/project-v/internal/iam/users/mocks"
 	"MydroX/project-v/pkg/logger"
 	"encoding/json"
 	"fmt"
@@ -11,9 +12,10 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 const (
@@ -24,19 +26,38 @@ const (
 
 type testServer struct {
 	router      *gin.Engine
-	mockUsecase *mocks.MockUsecasesInterface
+	mockUsecase *mocks.MockUsersUsecases
+}
+
+func testRouter(logger *logger.Logger, _ *gorm.DB, controller Controller) *gin.Engine {
+	router := gin.Default()
+
+	err := router.SetTrustedProxies(nil)
+	if err != nil {
+		logger.Zap.Fatal("error setting trusted proxies", zap.Error(err))
+	}
+
+	api := router.Group("api")
+	v1 := api.Group("/v1")
+
+	v1.POST("/register", controller.CreateUser)
+	v1.POST("/auth", controller.AuthenticateUser)
+	v1.POST("/:uuid", controller.GetUser)
+
+	return router
 }
 
 func newServerTest(t *testing.T) testServer {
 	logger := logger.New("TEST")
-	validator := validator.New()
 
 	ctrl := gomock.NewController(t)
-	usecasesMock := mocks.NewMockUsecasesInterface(ctrl)
-	controller := NewController(logger, validator, usecasesMock)
+	usecasesMock := mocks.NewMockUsersUsecases(ctrl)
+
+	c := NewController(logger, usecasesMock)
+	router := testRouter(logger, nil, *c)
 
 	return testServer{
-		router:      Router(logger, validator, nil, controller),
+		router:      router,
 		mockUsecase: usecasesMock,
 	}
 }
@@ -45,7 +66,7 @@ func Test_Create(t *testing.T) {
 	s := newServerTest(t)
 
 	t.Run("Create with success V1", func(t *testing.T) {
-		input := CreateUserRequest{
+		input := dto.CreateUserRequest{
 			Username: "test",
 			Email:    "test@test.com",
 			Password: "thisisatestpassword1234!@#$",
@@ -55,7 +76,7 @@ func Test_Create(t *testing.T) {
 
 		req, _ := http.NewRequest("POST", v1+create, strings.NewReader(string(userJSON)))
 
-		s.mockUsecase.EXPECT().Create(gomock.Any(), input.Username, gomock.Any(), input.Email, input.Role).Return(nil)
+		s.mockUsecase.EXPECT().Create(gomock.Any()).Return(nil)
 
 		w := httptest.NewRecorder()
 		s.router.ServeHTTP(w, req)
@@ -71,7 +92,7 @@ func Test_Create(t *testing.T) {
 	})
 
 	t.Run("Failed to validate JSON", func(t *testing.T) {
-		input := CreateUserRequest{
+		input := dto.CreateUserRequest{
 			Username: "test",
 			Email:    "",
 			Password: "thisisatestpassword1234!@#$",
@@ -81,15 +102,13 @@ func Test_Create(t *testing.T) {
 
 		req, _ := http.NewRequest("POST", v1+create, strings.NewReader(string(userJSON)))
 
-		s.mockUsecase.EXPECT().Create(gomock.Any(), input.Username, gomock.Any(), input.Email, input.Role).Return(nil).AnyTimes()
-
 		w := httptest.NewRecorder()
 		s.router.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
 	t.Run("Usecase error V1", func(t *testing.T) {
-		input := CreateUserRequest{
+		input := dto.CreateUserRequest{
 			Username: "test",
 			Email:    "test@test.com",
 			Password: "thisisatestpassword1234!@#$",
@@ -99,7 +118,7 @@ func Test_Create(t *testing.T) {
 
 		req, _ := http.NewRequest("POST", v1+create, strings.NewReader(string(userJSON)))
 
-		s.mockUsecase.EXPECT().Create(gomock.Any(), input.Username, gomock.Any(), input.Email, input.Role).Return(fmt.Errorf("test error"))
+		s.mockUsecase.EXPECT().Create(gomock.Any()).Return(fmt.Errorf("test error"))
 
 		w := httptest.NewRecorder()
 		s.router.ServeHTTP(w, req)
