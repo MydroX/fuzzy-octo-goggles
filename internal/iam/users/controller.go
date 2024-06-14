@@ -62,6 +62,7 @@ func (c *Controller) GetUser(ctx *gin.Context) {
 		response.InvalidRequest(c.logger, ctx)
 		return
 	}
+
 	userUUID, err := uuid.ValidateAndParse(uuidStr)
 	if err != nil {
 		response.InvalidRequest(c.logger, ctx)

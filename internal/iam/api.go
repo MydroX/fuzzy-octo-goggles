@@ -41,7 +41,7 @@ func Router(logger *logger.Logger, service service) *gin.Engine {
 	users := v1.Group("/users")
 	users.POST("/register", service.usersController.CreateUser)
 	users.POST("/auth", service.usersController.AuthenticateUser)
-	users.POST("/:uuid", service.usersController.GetUser)
+	users.GET("/:uuid", service.usersController.GetUser)
 
 	// TODO: Middleware authentification
 	users.PUT("/:uuid", service.usersController.UpdateUser)
