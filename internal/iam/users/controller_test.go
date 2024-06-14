@@ -40,9 +40,14 @@ func testRouter(logger *logger.Logger, _ *gorm.DB, controller Controller) *gin.E
 	api := router.Group("api")
 	v1 := api.Group("/v1")
 
-	v1.POST("/register", controller.CreateUser)
-	v1.POST("/auth", controller.AuthenticateUser)
-	v1.POST("/:uuid", controller.GetUser)
+	users := v1.Group("/users")
+	users.POST("/register", controller.CreateUser)
+	users.POST("/auth", controller.AuthenticateUser)
+	users.POST("/:uuid", controller.GetUser)
+
+	// TODO: Middleware authentification
+	users.POST("/update/:uuid", controller.UpdateUser)
+	users.DELETE("/:uuid", controller.DeleteUser)
 
 	return router
 }

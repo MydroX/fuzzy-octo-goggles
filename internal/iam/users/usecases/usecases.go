@@ -1,4 +1,5 @@
-// Package usecases provides the implementation of the IAM usecases.
+// Package usecases is the internal logic. Describes an action that the user wants to perform.
+// Also interact with repository and determines how the data has to be transmitted to the external layer.
 package usecases
 
 import (
@@ -59,8 +60,28 @@ func (u *usecases) Get(uuid uuid.UUID) (*dto.GetUserResponse, error) {
 	return &res, err
 }
 
-func (u *usecases) Update(user models.User) error {
-	err := u.repository.UpdateUser(user)
+func (u *usecases) Update(user dto.UpdateUserRequest) error {
+	userModel := models.User{
+		Username: user.Username,
+		Email:    user.Email,
+	}
+
+	err := u.repository.UpdateUser(userModel)
+	return err
+}
+
+func (u *usecases) UpdatePassword(uuid uuid.UUID, newPassword string) error {
+	newPasswordCrypted, err := password.Hash(newPassword)
+	if err != nil {
+		return err
+	}
+
+	err = u.repository.UpdatePassword(uuid, newPasswordCrypted)
+	return err
+}
+
+func (u *usecases) UpdateEmail(uuid uuid.UUID, email string) error {
+	err := u.repository.UpdateEmail(uuid, email)
 	return err
 }
 

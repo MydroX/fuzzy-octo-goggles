@@ -62,6 +62,30 @@ func (r *repository) UpdateUser(user models.User) error {
 	return nil
 }
 
+func (r *repository) UpdatePassword(uuid uuid.UUID, password string) error {
+	user := models.User{
+		UUID: uuid,
+	}
+	res := r.db.Model(&user).Update("password", password)
+	if res.Error != nil {
+		r.logger.Zap.Sugar().Errorf("error updating user password: %v", res.Error)
+		return res.Error
+	}
+	return nil
+}
+
+func (r *repository) UpdateEmail(uuid uuid.UUID, email string) error {
+	user := models.User{
+		UUID: uuid,
+	}
+	res := r.db.Model(&user).Update("email", email)
+	if res.Error != nil {
+		r.logger.Zap.Sugar().Errorf("error updating user email: %v", res.Error)
+		return res.Error
+	}
+	return nil
+}
+
 func (r *repository) DeleteUser(uuid uuid.UUID) error {
 	res := r.db.Delete(&models.User{}, uuid)
 	if res.Error != nil {

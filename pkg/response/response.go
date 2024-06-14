@@ -33,8 +33,3 @@ func InvalidRequest(logger *logger.Logger, ctx *gin.Context) {
 func NotFound(logger *logger.Logger, ctx *gin.Context) {
 	logAndError(logger, ctx, 404, "not found")
 }
-
-// CreationSuccess is a function to handle success response for creation of any entity
-func CreationSuccess(ctx *gin.Context, message string) {
-	ctx.JSON(201, gin.H{"message": message})
-}

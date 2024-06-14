@@ -1,3 +1,4 @@
+// Package users is the outside layer of the service, make the link between the API and the internal logic
 package users
 
 import (
@@ -6,10 +7,10 @@ import (
 	apiError "MydroX/project-v/pkg/errors"
 	"MydroX/project-v/pkg/logger"
 	"MydroX/project-v/pkg/response"
+	"MydroX/project-v/pkg/uuid"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
 )
 
 type Controller struct {
@@ -52,7 +53,7 @@ func (c *Controller) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	response.CreationSuccess(ctx, "user created")
+	ctx.JSON(201, gin.H{"message": "user created"})
 }
 
 func (c *Controller) GetUser(ctx *gin.Context) {
@@ -61,14 +62,7 @@ func (c *Controller) GetUser(ctx *gin.Context) {
 		response.InvalidRequest(c.logger, ctx)
 		return
 	}
-
-	err := uuid.Validate(uuidStr)
-	if err != nil {
-		response.InvalidRequest(c.logger, ctx)
-		return
-	}
-
-	userUUID, err := uuid.Parse(uuidStr)
+	userUUID, err := uuid.ValidateAndParse(uuidStr)
 	if err != nil {
 		response.InvalidRequest(c.logger, ctx)
 		return
@@ -88,11 +82,119 @@ func (c *Controller) GetUser(ctx *gin.Context) {
 }
 
 func (c *Controller) UpdateUser(ctx *gin.Context) {
-	// panic("not implemented") // TODO: Implement
+	var request dto.UpdateUserRequest
+
+	err := ctx.BindJSON(&request)
+	if err != nil {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+
+	err = c.validate.Struct(request)
+	if err != nil {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+
+	err = c.usecases.Update(request)
+	if err != nil {
+		response.InternalError(c.logger, ctx, err)
+		return
+	}
+
+	ctx.JSON(200, gin.H{"message": "user updated"})
+}
+
+func (c *Controller) UpdateEmail(ctx *gin.Context) {
+	var request dto.UpdateEmailRequest
+
+	uuidStr := ctx.Param("uuid")
+	if uuidStr == "" {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+	userUUID, err := uuid.ValidateAndParse(uuidStr)
+	if err != nil {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+
+	err = ctx.BindJSON(&request)
+	if err != nil {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+
+	err = c.validate.Struct(request)
+	if err != nil {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+
+	err = c.usecases.UpdateEmail(userUUID, request.Email)
+	if err != nil {
+		response.InternalError(c.logger, ctx, err)
+		return
+	}
+
+	ctx.JSON(200, gin.H{"message": "email updated"})
+}
+
+func (c *Controller) UpdatePassword(ctx *gin.Context) {
+	var request dto.UpdatePasswordRequest
+
+	uuidStr := ctx.Param("uuid")
+	if uuidStr == "" {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+	userUUID, err := uuid.ValidateAndParse(uuidStr)
+	if err != nil {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+
+	err = ctx.BindJSON(&request)
+	if err != nil {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+
+	err = c.validate.Struct(request)
+	if err != nil {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+
+	err = c.usecases.UpdatePassword(userUUID, request.Password)
+
+	if err != nil {
+		response.InternalError(c.logger, ctx, err)
+		return
+	}
+
+	ctx.JSON(200, gin.H{"message": "password updated"})
 }
 
 func (c *Controller) DeleteUser(ctx *gin.Context) {
-	// panic("not implemented") // TODO: Implement
+	uuidStr := ctx.Param("uuid")
+	if uuidStr == "" {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+	userUUID, err := uuid.ValidateAndParse(uuidStr)
+	if err != nil {
+		response.InvalidRequest(c.logger, ctx)
+		return
+	}
+
+	err = c.usecases.Delete(userUUID)
+	if err != nil {
+		response.InternalError(c.logger, ctx, err)
+		return
+	}
+
+	ctx.JSON(200, gin.H{"message": "user deleted"})
 }
 
 func (c *Controller) AuthenticateUser(ctx *gin.Context) {

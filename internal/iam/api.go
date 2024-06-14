@@ -37,14 +37,18 @@ func Router(logger *logger.Logger, service service) *gin.Engine {
 	// - Middleware SECRET KEY API for every endpoint in headers
 
 	v1 := api.Group("/v1")
-	v1.POST("/register", service.usersController.CreateUser)
-	v1.POST("/auth", service.usersController.AuthenticateUser)
-	v1.POST("/:uuid", service.usersController.GetUser)
 
-	// TODO
-	// - Middleware authentification
-	// - UpdateUser
-	// - DeleteUser
+	users := v1.Group("/users")
+	users.POST("/register", service.usersController.CreateUser)
+	users.POST("/auth", service.usersController.AuthenticateUser)
+	users.POST("/:uuid", service.usersController.GetUser)
+
+	// TODO: Middleware authentification
+	users.PUT("/:uuid", service.usersController.UpdateUser)
+	users.PATCH("/:uuid/email", service.usersController.UpdateEmail)
+	users.PATCH("/:uuid/password", service.usersController.UpdatePassword)
+
+	users.DELETE("/:uuid", service.usersController.DeleteUser)
 
 	return router
 }

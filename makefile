@@ -27,7 +27,7 @@ migrate-reset:
 
 lint:
 	@echo "Linting..."
-	@golangci-lint run
+	@golangci-lint -v run
 
 go-generate:
 	@echo "Generating code..."
