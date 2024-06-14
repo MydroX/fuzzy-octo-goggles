@@ -34,4 +34,4 @@ build:
     - go build -o iam cmd/iam/main.go
   artifacts:
     paths:
-      - iam
+      - iamgo tool cover -html=coverage.out
