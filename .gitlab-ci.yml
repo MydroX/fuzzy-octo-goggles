@@ -11,19 +11,13 @@ lint:
   image: golangci/golangci-lint:$GOLANGCI_LINT_VERSION
   stage: test
   script:
-    # Write the code coverage report to gl-code-quality-report.json
-    # and print linting issues to stdout in the format: path/to/file:line description
-    - golangci-lint run --print-issued-lines=false --out-format code-climate:gl-code-quality-report.json,line-number
-  artifacts:
-    reports:
-      codequality: gl-code-quality-report.json
-    paths:
-      - gl-code-quality-report.json
+    - golangci-lint run --print-issued-lines=false
 
 go-test:
     stage: test
     script:
-      - go test -coverpkg=all -coverprofile=coverage.out ./...
+      - go test -coverprofile=coverage.out ./...
+      - ls -l
     artifacts:
       paths:
         - coverage.out
@@ -32,6 +26,3 @@ build:
   stage: build
   script:
     - go build -o iam cmd/iam/main.go
-  artifacts:
-    paths:
-      - iam
