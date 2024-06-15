@@ -19,8 +19,9 @@ go-test:
       # - go test -v -cover -coverpkg=./... -coverprofile=coverage.out ./...
       # - go install github.com/t-yuki/gocover-cobertura@latest
       # - gocover-cobertura < coverage.txt > coverage.xml
-      - go test -v -cover -coverpkg=./... ./...
-    coverage: '/coverage: \d+.\d+% of statements/'
+      - go test -v -coverpkg=./... -coverprofile=profile.cov ./...
+      - go tool cover -func profile.cov
+    coverage: '\(statements\)(?:\s+)?(\d+(?:\.\d+)?%)'
     artifacts:
       reports:
         coverage_report:
