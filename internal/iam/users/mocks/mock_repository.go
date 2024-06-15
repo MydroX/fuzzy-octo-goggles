@@ -41,7 +41,7 @@ func (m *MockUsersRepository) EXPECT() *MockUsersRepositoryMockRecorder {
 }
 
 // CreateUser mocks base method.
-func (m *MockUsersRepository) CreateUser(arg0 models.User) error {
+func (m *MockUsersRepository) CreateUser(arg0 *models.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", arg0)
 	ret0, _ := ret[0].(error)
@@ -112,7 +112,7 @@ func (mr *MockUsersRepositoryMockRecorder) UpdatePassword(arg0, arg1 any) *gomoc
 }
 
 // UpdateUser mocks base method.
-func (m *MockUsersRepository) UpdateUser(arg0 models.User) error {
+func (m *MockUsersRepository) UpdateUser(arg0 *models.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateUser", arg0)
 	ret0, _ := ret[0].(error)

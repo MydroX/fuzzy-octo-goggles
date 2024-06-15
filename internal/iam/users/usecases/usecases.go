@@ -33,22 +33,21 @@ func (u *usecases) Create(req dto.CreateUserRequest) error {
 		Role:     req.Role,
 	}
 
-	passwordCrypted, err := password.Hash(req.Password)
-	if err != nil {
-		return err
-	}
-	user.Password = passwordCrypted
+	user.Password, _ = password.Hash(req.Password)
 
 	userUUID := uuid.New()
 	user.UUID = userUUID
 
-	err = u.repository.CreateUser(user)
+	err := u.repository.CreateUser(&user)
 
 	return err
 }
 
 func (u *usecases) Get(uuid uuid.UUID) (*dto.GetUserResponse, error) {
 	user, err := u.repository.GetUser(uuid)
+	if err != nil {
+		return nil, err
+	}
 
 	res := dto.GetUserResponse{
 		UUID:     user.UUID,
@@ -62,21 +61,21 @@ func (u *usecases) Get(uuid uuid.UUID) (*dto.GetUserResponse, error) {
 
 func (u *usecases) Update(user dto.UpdateUserRequest) error {
 	userModel := models.User{
+		UUID:     user.UUID,
 		Username: user.Username,
 		Email:    user.Email,
+		Role:     user.Role,
+		Password: user.Password,
 	}
 
-	err := u.repository.UpdateUser(userModel)
+	err := u.repository.UpdateUser(&userModel)
 	return err
 }
 
 func (u *usecases) UpdatePassword(uuid uuid.UUID, newPassword string) error {
-	newPasswordCrypted, err := password.Hash(newPassword)
-	if err != nil {
-		return err
-	}
+	newPasswordCrypted, _ := password.Hash(newPassword)
 
-	err = u.repository.UpdatePassword(uuid, newPasswordCrypted)
+	err := u.repository.UpdatePassword(uuid, newPasswordCrypted)
 	return err
 }
 

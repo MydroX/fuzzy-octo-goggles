@@ -24,8 +24,8 @@ func NewRepository(l *logger.Logger, db *gorm.DB) UsersRepository {
 	}
 }
 
-func (r *repository) CreateUser(user models.User) error {
-	res := r.db.Create(user)
+func (r *repository) CreateUser(user *models.User) error {
+	res := r.db.Create(&user)
 	if res.Error != nil {
 		if res.Error == gorm.ErrDuplicatedKey {
 			fmt.Println(res.Error)
@@ -52,7 +52,7 @@ func (r *repository) GetUser(uuid uuid.UUID) (*models.User, error) {
 	return &user, nil
 }
 
-func (r *repository) UpdateUser(user models.User) error {
+func (r *repository) UpdateUser(user *models.User) error {
 	res := r.db.Save(&user)
 	if res.Error != nil {
 		r.logger.Zap.Sugar().Errorf("error updating user: %v", res.Error)
