@@ -19,6 +19,7 @@ go-test:
       - go test -coverprofile=coverage.txt -covermode count ./...
       - go install github.com/t-yuki/gocover-cobertura@latest
       - gocover-cobertura < coverage.txt > coverage.xml
+      - ls -l
     artifacts:
       reports:
         coverage_report:
