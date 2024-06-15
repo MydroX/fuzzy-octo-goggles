@@ -20,6 +20,7 @@ go-test:
       - go install github.com/t-yuki/gocover-cobertura@latest
       - gocover-cobertura < coverage.txt > coverage.xml
       - ls -l
+    coverage: '/coverage: \d+.\d+% of statements/'
     artifacts:
       reports:
         coverage_report:
