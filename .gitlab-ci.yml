@@ -16,10 +16,10 @@ lint:
 go-test:
     stage: test
     script:
-      - go test -v -coverpkg=./... -coverprofile=coverage.txt ./...
-      - go install github.com/t-yuki/gocover-cobertura@latest
-      - gocover-cobertura < coverage.txt > coverage.xml
-      - ls -l
+      # - go test -v -cover -coverpkg=./... -coverprofile=coverage.out ./...
+      # - go install github.com/t-yuki/gocover-cobertura@latest
+      # - gocover-cobertura < coverage.txt > coverage.xml
+      - go test -v -cover -coverpkg=./... ./...
     coverage: '/coverage: \d+.\d+% of statements/'
     artifacts:
       reports:
