@@ -21,7 +21,7 @@ go-test:
       # - gocover-cobertura < coverage.txt > coverage.xml
       - go test -v -coverpkg=./... -coverprofile=profile.cov ./...
       - go tool cover -func profile.cov
-    coverage: '\(statements\)(?:\s+)?(\d+(?:\.\d+)?%)'
+    coverage: '/\(statements\)(?:\s+)?(\d+(?:\.\d+)?%)/'
     artifacts:
       reports:
         coverage_report:
