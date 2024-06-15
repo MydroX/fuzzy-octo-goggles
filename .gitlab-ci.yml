@@ -16,11 +16,14 @@ lint:
 go-test:
     stage: test
     script:
-      - go test -coverprofile=coverage.out ./...
-      - ls -l
+      - go test -coverprofile=coverage.txt -covermode count ./...
+      - go install github.com/t-yuki/gocover-cobertura@latest
+      - gocover-cobertura < coverage.txt > coverage.xml
     artifacts:
-      paths:
-        - coverage.out
+      reports:
+        coverage_report:
+          coverage_format: cobertura
+          path: coverage.xml
         
 build:
   stage: build

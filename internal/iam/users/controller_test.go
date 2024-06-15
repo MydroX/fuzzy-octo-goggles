@@ -75,7 +75,7 @@ func newServerTest(t *testing.T) testServer {
 func Test_Create(t *testing.T) {
 	s := newServerTest(t)
 
-	t.Run("Create with success V1", func(t *testing.T) {
+	t.Run("[V1] Create with success", func(t *testing.T) {
 		input := dto.CreateUserRequest{
 			Username: "test",
 			Email:    "test@test.com",
@@ -93,7 +93,7 @@ func Test_Create(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, w.Code)
 	})
 
-	t.Run("Failed to bind JSON", func(t *testing.T) {
+	t.Run("[V1] Failed to bind JSON", func(t *testing.T) {
 		req, _ := http.NewRequest("POST", v1+create, strings.NewReader(""))
 
 		w := httptest.NewRecorder()
@@ -101,7 +101,7 @@ func Test_Create(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Failed to validate JSON", func(t *testing.T) {
+	t.Run("[V1] Failed to validate JSON", func(t *testing.T) {
 		input := dto.CreateUserRequest{
 			Username: "test",
 			Email:    "",
@@ -117,7 +117,7 @@ func Test_Create(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Usecase error V1", func(t *testing.T) {
+	t.Run("[V1] Usecase error", func(t *testing.T) {
 		input := dto.CreateUserRequest{
 			Username: "test",
 			Email:    "test@test.com",
@@ -147,7 +147,7 @@ func Test_Get(t *testing.T) {
 		Role:     "USER",
 	}
 
-	t.Run("Get with success V1", func(t *testing.T) {
+	t.Run("[V1] Get with success", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", v1+"/"+uuid.String(), nil)
 
 		s.mockUsecase.EXPECT().Get(uuid).Return(&user, nil)
@@ -157,7 +157,7 @@ func Test_Get(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("Failed to validate UUID", func(t *testing.T) {
+	t.Run("[V1] Failed to validate UUID", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", v1+"/"+"1", nil)
 
 		w := httptest.NewRecorder()
@@ -165,7 +165,7 @@ func Test_Get(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Failed to find user", func(t *testing.T) {
+	t.Run("[V1] Failed to find user", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", v1+"/"+uuid.String(), nil)
 
 		s.mockUsecase.EXPECT().Get(uuid).Return(nil, errors.ErrNotFound)
@@ -175,7 +175,7 @@ func Test_Get(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, w.Code)
 	})
 
-	t.Run("Usecase error V1", func(t *testing.T) {
+	t.Run("[V1] Usecase error", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", v1+"/"+uuid.String(), nil)
 
 		s.mockUsecase.EXPECT().Get(uuid).Return(nil, fmt.Errorf("test error"))
@@ -191,7 +191,7 @@ func Test_Update(t *testing.T) {
 
 	uuid := uuid.New()
 
-	t.Run("Update with success V1", func(t *testing.T) {
+	t.Run("[V1] Update with success", func(t *testing.T) {
 		user := dto.UpdateUserRequest{
 			Username: "testusername",
 			Email:    "test@test.com",
@@ -209,7 +209,7 @@ func Test_Update(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("Failed to bind JSON", func(t *testing.T) {
+	t.Run("[V1] Failed to bind JSON", func(t *testing.T) {
 		req, _ := http.NewRequest("PUT", v1+"/"+uuid.String(), strings.NewReader(""))
 
 		w := httptest.NewRecorder()
@@ -217,7 +217,7 @@ func Test_Update(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Failed to validate JSON", func(t *testing.T) {
+	t.Run("[V1] Failed to validate JSON", func(t *testing.T) {
 		user := dto.UpdateUserRequest{
 			Username: "testusername",
 			Email:    "",
@@ -233,7 +233,7 @@ func Test_Update(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Usecase error V1", func(t *testing.T) {
+	t.Run("[V1] Usecase error", func(t *testing.T) {
 		user := dto.UpdateUserRequest{
 			Username: "testusername",
 			Email:    "test@test.com",
@@ -258,7 +258,7 @@ func Test_UpdateEmail(t *testing.T) {
 
 	uuid := uuid.New()
 
-	t.Run("Update email with success V1", func(t *testing.T) {
+	t.Run("[V1] Update email with success", func(t *testing.T) {
 		user := dto.UpdateEmailRequest{
 			Email: "test@test.com",
 		}
@@ -273,7 +273,7 @@ func Test_UpdateEmail(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("Failed to bind JSON", func(t *testing.T) {
+	t.Run("[V1] Failed to bind JSON", func(t *testing.T) {
 		req, _ := http.NewRequest("PATCH", v1+"/"+uuid.String()+"/email", strings.NewReader(""))
 
 		w := httptest.NewRecorder()
@@ -281,7 +281,7 @@ func Test_UpdateEmail(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Failed to validate JSON", func(t *testing.T) {
+	t.Run("[V1] Failed to validate JSON", func(t *testing.T) {
 		user := dto.UpdateEmailRequest{
 			Email: "erthgfderftrfe",
 		}
@@ -294,7 +294,7 @@ func Test_UpdateEmail(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Failed to validate UUID", func(t *testing.T) {
+	t.Run("[V1] Failed to validate UUID", func(t *testing.T) {
 		req, _ := http.NewRequest("PATCH", v1+"/"+"notanuuid"+"/email", strings.NewReader(""))
 
 		w := httptest.NewRecorder()
@@ -302,7 +302,7 @@ func Test_UpdateEmail(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Usecase error V1", func(t *testing.T) {
+	t.Run("[V1] Usecase error", func(t *testing.T) {
 		user := dto.UpdateEmailRequest{
 			Email: "test@test.com",
 		}
@@ -323,7 +323,7 @@ func Test_UpdatePassword(t *testing.T) {
 
 	uuid := uuid.New()
 
-	t.Run("Update password with success V1", func(t *testing.T) {
+	t.Run("[V1] Update password with success", func(t *testing.T) {
 		user := dto.UpdatePasswordRequest{
 			Password: "thisisatestpassword123?",
 		}
@@ -338,7 +338,7 @@ func Test_UpdatePassword(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("Failed to bind JSON", func(t *testing.T) {
+	t.Run("[V1] Failed to bind JSON", func(t *testing.T) {
 		req, _ := http.NewRequest("PATCH", v1+"/"+uuid.String()+"/password", strings.NewReader(""))
 
 		w := httptest.NewRecorder()
@@ -359,7 +359,7 @@ func Test_UpdatePassword(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Failed to validate UUID", func(t *testing.T) {
+	t.Run("[V1] Failed to validate UUID", func(t *testing.T) {
 		req, _ := http.NewRequest("PATCH", v1+"/"+"notanuuid"+"/password", strings.NewReader(""))
 
 		w := httptest.NewRecorder()
@@ -367,7 +367,7 @@ func Test_UpdatePassword(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Usecase error V1", func(t *testing.T) {
+	t.Run("[V1] Usecase error", func(t *testing.T) {
 		user := dto.UpdatePasswordRequest{
 			Password: "thisisatestpassword123?",
 		}
@@ -388,7 +388,7 @@ func Test_Delete(t *testing.T) {
 
 	uuid := uuid.New()
 
-	t.Run("Delete with success V1", func(t *testing.T) {
+	t.Run("[V1] Delete with success", func(t *testing.T) {
 		req, _ := http.NewRequest("DELETE", v1+"/"+uuid.String(), nil)
 
 		s.mockUsecase.EXPECT().Delete(uuid).Return(nil)
@@ -398,7 +398,7 @@ func Test_Delete(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("Failed to validate UUID", func(t *testing.T) {
+	t.Run("[V1] Failed to validate UUID", func(t *testing.T) {
 		req, _ := http.NewRequest("DELETE", v1+"/"+"notanuuid", nil)
 
 		w := httptest.NewRecorder()
@@ -406,7 +406,7 @@ func Test_Delete(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
-	t.Run("Usecase error V1", func(t *testing.T) {
+	t.Run("[V1] Usecase error", func(t *testing.T) {
 		req, _ := http.NewRequest("DELETE", v1+"/"+uuid.String(), nil)
 
 		s.mockUsecase.EXPECT().Delete(uuid).Return(fmt.Errorf("test error"))
