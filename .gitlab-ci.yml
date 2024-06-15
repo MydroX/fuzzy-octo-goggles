@@ -16,7 +16,7 @@ lint:
 go-test:
     stage: test
     script:
-      - go test -coverprofile=coverage.txt -covermode count ./...
+      - go test -v -coverpkg=./... -coverprofile=coverage.txt ./...
       - go install github.com/t-yuki/gocover-cobertura@latest
       - gocover-cobertura < coverage.txt > coverage.xml
       - ls -l
