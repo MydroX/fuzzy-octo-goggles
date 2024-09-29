@@ -2,15 +2,38 @@ package logger
 
 import "go.uber.org/zap"
 
-func New(env string) (logger *zap.Logger) {
+type Logger struct {
+	Zap   *zap.Logger
+	Debug bool
+}
+
+func New(env string) *Logger {
+	var zapLogger *zap.Logger
 	switch env {
-	case "dev":
-		logger, _ = zap.NewDevelopment()
-	case "prod":
-		logger, _ = zap.NewProduction()
+	case "DEV":
+		zapLogger, _ = zap.NewDevelopment()
+		return &Logger{
+			Zap:   zapLogger,
+			Debug: true,
+		}
+	case "PROD":
+		zapLogger, _ = zap.NewProduction()
+		return &Logger{
+			Zap:   zapLogger,
+			Debug: false,
+		}
+	case "TEST":
+		zapLogger, _ = zap.NewDevelopment()
+		return &Logger{
+			Zap:   zapLogger,
+			Debug: true,
+		}
 	default:
-		logger = zap.NewNop()
-		logger.Warn("logger is set unknown environment")
+		zapLogger = zap.NewNop()
+		zapLogger.Warn("logger is set unknown environment")
 	}
-	return logger
+	return &Logger{
+		Zap:   zapLogger,
+		Debug: false,
+	}
 }
